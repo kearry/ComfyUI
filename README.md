@@ -274,6 +274,29 @@ You can install ComfyUI in Apple Mac silicon (M1 or M2) with any recent macOS ve
 
 > **Note**: Remember to add your models, VAE, LoRAs etc. to the corresponding Comfy folders, as discussed in [ComfyUI manual installation](#manual-install-windows-linux).
 
+#### Apple Mac Tips
+
+ComfyUI relies on PyTorch's MPS backend when running on Apple silicon. On
+machines with limited unified memory such as a 32&nbsp;GB MacBook, you may need to
+reduce the memory footprint of the application:
+
+
+You can automate these tweaks with the `--mps-memory-optimizations` flag, which
+enables the recommended options and sets `PYTORCH_ENABLE_MPS_FALLBACK=1` for you.
+
+1. Start ComfyUI with the `--lowvram` flag to split the UNet and lower memory
+   usage.
+2. Set the environment variable `PYTORCH_ENABLE_MPS_FALLBACK=1` to allow PyTorch
+   to fall back to CPU implementations for operators not available on MPS.
+3. Use `--cache-none` if memory pressure persists, trading execution speed for a
+   smaller memory footprint.
+
+Example:
+
+```bash
+python main.py --mps-memory-optimizations
+```
+
 #### DirectML (AMD Cards on Windows)
 
 This is very badly supported and is not recommended. There are some unofficial builds of pytorch ROCm on windows that exist that will give you a much better experience than this. This readme will be updated once official pytorch ROCm builds for windows come out.

@@ -131,6 +131,12 @@ parser.add_argument("--reserve-vram", type=float, default=None, help="Set the am
 
 parser.add_argument("--async-offload", action="store_true", help="Use async weight offloading.")
 
+parser.add_argument(
+    "--mps-memory-optimizations",
+    action="store_true",
+    help="On Apple MPS devices automatically enable low memory flags.",
+)
+
 parser.add_argument("--default-hashing-function", type=str, choices=['md5', 'sha1', 'sha256', 'sha512'], default='sha256', help="Allows you to choose the hash function to use for duplicate filename / contents comparison. Default is sha256.")
 
 parser.add_argument("--disable-smart-memory", action="store_true", help="Force ComfyUI to agressively offload to regular ram instead of keeping models in vram when it can.")
@@ -221,6 +227,13 @@ if args.disable_auto_launch:
 
 if args.force_fp16:
     args.fp16_unet = True
+
+if args.mps_memory_optimizations and torch.backends.mps.is_available():
+    os.environ.setdefault("PYTORCH_ENABLE_MPS_FALLBACK", "1")
+    if not any((args.lowvram, args.highvram, args.novram, args.normalvram)):
+        args.lowvram = True
+    if not (args.cache_lru or args.cache_classic or args.cache_none):
+        args.cache_none = True
 
 
 # '--fast' is not provided, use an empty set

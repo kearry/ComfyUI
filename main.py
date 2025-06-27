@@ -159,6 +159,8 @@ def prompt_worker(q, server_instance):
     last_gc_collect = 0
     need_gc = False
     gc_collect_interval = 10.0
+    if args.mps_memory_optimizations:
+        gc_collect_interval = 3.0
 
     while True:
         timeout = 1000.0
